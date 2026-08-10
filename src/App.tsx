@@ -1,26 +1,17 @@
 import "./App.css";
 import { Routes, Route, Outlet } from "react-router";
 import IndexPage from "./pages/index-page";
-import SignInPage from "./pages/sign-in-page";
-import SignUpPage from "./pages/sign-up-page";
-
-function AuthLayout() {
-  return (
-    <div>
-      <header>Auth!</header>
-      <Outlet />
-    </div>
-  );
-}
+import SearchPage from "./pages/search-page";
+import { TierListPage } from "./pages/tier-list-page";
+import Layout from "./components/Layout";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<IndexPage />} />
-
-      <Route element={<AuthLayout />}>
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
+      <Route element={<Layout />}>
+        <Route path="/" element={<IndexPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/tierlist" element={<TierListPage />} />
       </Route>
     </Routes>
   );
