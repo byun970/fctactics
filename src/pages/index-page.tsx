@@ -1,3 +1,7 @@
+import { nexonClient } from "@/api/nexonClient";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 const formations = [
   { name: "4-2-3-1", winRate: "60.0%", pickRate: "42.8%" },
   { name: "4-2-2-2", winRate: "48.1%", pickRate: "30.8%" },
@@ -5,7 +9,38 @@ const formations = [
   { name: "4-1-2-3", winRate: "20.0%", pickRate: "10.8%" },
 ];
 
+// interface PositionMeta {
+//   spposition: number;
+//   desc: string;
+// }
+
+interface PlayerMeta {
+  id: number;
+  name: string;
+}
+
 export default function IndexPage() {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchFormationStats() {
+      try {
+        setLoading(true);
+
+        const response = await axios.get<PlayerMeta[]>(
+          "/api/static/fconline/meta/spid.json",
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error("데이터 로드 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFormationStats();
+  }, []);
+
   return (
     <>
       <section className="mb-10">

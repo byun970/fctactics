@@ -15,5 +15,12 @@ export default defineConfig({
     watch: {
       ignored: ["**/server/**"],
     },
+    proxy: {
+      "/api": {
+        target: "https://open.api.nexon.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
 });
