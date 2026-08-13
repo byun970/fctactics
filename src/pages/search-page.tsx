@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 
 export default function SearchPage() {
   return (
-    <div className="from-background via-muted/50 to-background flex min-h-screen flex-col items-center justify-center bg-gradient-to-b p-4">
+    <div className="from-background via-muted/50 to-background flex min-h-screen flex-col items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6 text-center">
         <div className="space-y-2">
           <h2 className="text-foreground text-3xl font-extrabold tracking-tight sm:text-4xl">
