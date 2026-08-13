@@ -1,10 +1,19 @@
+export interface PositionMeta {
+  spposition: number;
+  desc: string;
+}
+
+export interface PlayerMeta {
+  id: number;
+  name: string;
+}
+
 export interface UserInfo {
   ouid: string;
   nickname: string;
   level: number;
 }
 
-// 1. 개별 유저의 매치 정보 타입
 export interface MatchInfo {
   ouid: string;
   nickname: string;

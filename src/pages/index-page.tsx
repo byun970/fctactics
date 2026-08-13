@@ -1,6 +1,6 @@
-import { nexonClient } from "@/api/nexonClient";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { type PlayerMeta } from "@/types/nexon";
 
 const formations = [
   { name: "4-2-3-1", winRate: "60.0%", pickRate: "42.8%" },
@@ -8,16 +8,6 @@ const formations = [
   { name: "5-2-3", winRate: "49.2%", pickRate: "15.8%" },
   { name: "4-1-2-3", winRate: "20.0%", pickRate: "10.8%" },
 ];
-
-// interface PositionMeta {
-//   spposition: number;
-//   desc: string;
-// }
-
-interface PlayerMeta {
-  id: number;
-  name: string;
-}
 
 export default function IndexPage() {
   const [loading, setLoading] = useState<boolean>(true);
