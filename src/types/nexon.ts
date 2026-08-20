@@ -33,10 +33,31 @@ export interface MatchInfo {
   };
 }
 
-// 2. 전체 매치 상세 데이터 타입
 export interface MatchDetail {
   matchId: string;
-  matchDate: string; // 날짜 표시용 필드 추가
+  matchDate: string;
   matchType: number;
-  matchInfo: MatchInfo[]; // Array<{...}> 대신 MatchInfo 인터페이스 사용
+  matchInfo: MatchInfo[];
+}
+
+export interface PlayerStatus {
+  shoot: number;
+  effectiveShoot: number;
+  assist: number;
+  goal: number;
+  dribble: number;
+  dribbleTry: number;
+  dribbleSuccess: number;
+  passTry: number;
+  passSuccess: number;
+  block: number;
+  tackle: number;
+  matchCount: number;
+}
+
+export interface RankerStat {
+  spid: number;
+  spposition: number;
+  status: PlayerStatus;
+  createDate: string;
 }
