@@ -1,3 +1,8 @@
+export interface MatchTypeMeta {
+  matchtype: number;
+  desc: string;
+}
+
 export interface PositionMeta {
   spposition: number;
   desc: string;
