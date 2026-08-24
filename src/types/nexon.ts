@@ -30,12 +30,26 @@ export interface MatchInfo {
     possession?: number;
     [key: string]: any;
   };
-  shoot?: {
-    shootTotal?: number;
-    shootTotalDisplay?: number;
-    effectiveShootTotal?: number;
-    [key: string]: any;
-  };
+  shoot?: ShootInfo;
+}
+
+export interface ShootInfo {
+  effectiveShootTotal: number;
+  goalFreekick: number;
+  goalHeading: number;
+  goalInPenalty: number;
+  goalOutPenalty: number;
+  goalPenaltyKick: number;
+  goalTotal: number;
+  goalTotalDisplay: number;
+  ownGoal: number;
+  shootFreekick: number;
+  shootHeading: number;
+  shootInPenalty: number;
+  shootOutPenalty: number;
+  shootOutScore: number;
+  shootPenaltyKick: number;
+  shootTotal: number;
 }
 
 export interface MatchDetail {
