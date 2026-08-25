@@ -1,10 +1,26 @@
-import { getMatchDetail, getMatchIds, getOuid } from "@/api/nexonClient";
+import {
+  getMatchDetail,
+  getMatchIds,
+  getMatchType,
+  getMaxDivision,
+  getOuid,
+} from "@/api/nexonClient";
 import type { MatchDetail } from "@/types/nexon";
 import { useQuery } from "@tanstack/react-query";
 
-export function useUserMatches(nickname: string) {
+export function useMatchType() {
+  return useQuery({
+    queryKey: ["matchTypes"],
+    queryFn: getMatchType,
+    staleTime: Infinity,
+  });
+}
+
+export function useUserMatches(nickname: string, matchType: number = 50) {
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
+
+  const matchTypesQuery = useMatchType();
 
   // ouid 조회
   const ouidQuery = useQuery({
@@ -19,8 +35,8 @@ export function useUserMatches(nickname: string) {
 
   // 매치 아이디 목록 조회
   const matchIdsQuery = useQuery({
-    queryKey: ["matchIds", ouid],
-    queryFn: () => getMatchIds(ouid!, 50, 0, 5),
+    queryKey: ["matchIds", ouid, matchType],
+    queryFn: () => getMatchIds(ouid!, matchType, 0, 5),
     enabled: !!ouid, // ouid를 성공적으로 받아오면 실행
     staleTime: 1000 * 60 * 5,
     retry: false,
@@ -47,15 +63,35 @@ export function useUserMatches(nickname: string) {
     },
   });
 
+  const maxDivisionQuery = useQuery({
+    queryKey: ["maxDivision", ouid],
+    queryFn: () => getMaxDivision(ouid!),
+    enabled: !!ouid, //ouid가 확보된 후 요청 실행
+    staleTime: 1000 * 60 * 10,
+  });
+
   return {
     ouid,
     matchDetails: matchDetailsQuery.data ?? [],
+    matchTypes: matchTypesQuery.data ?? [],
+    maxDivision: maxDivisionQuery.data ?? [],
     isLoading:
       ouidQuery.isLoading ||
       matchIdsQuery.isLoading ||
-      matchDetailsQuery.isLoading, // 하나라도 로딩 발생시 true
+      matchDetailsQuery.isLoading || // 하나라도 로딩 발생시 true
+      matchTypesQuery.isLoading ||
+      maxDivisionQuery.isLoading,
     isError:
-      ouidQuery.isError || matchIdsQuery.isError || matchDetailsQuery.isError,
-    error: ouidQuery.error || matchIdsQuery.error || matchDetailsQuery.error, // 하나라도 에러 발생시 true
+      ouidQuery.isError ||
+      matchIdsQuery.isError ||
+      matchDetailsQuery.isError ||
+      matchTypesQuery.isError ||
+      maxDivisionQuery.isError,
+    error:
+      ouidQuery.error ||
+      matchIdsQuery.error ||
+      matchDetailsQuery.error ||
+      matchTypesQuery.error ||
+      maxDivisionQuery.error, // 하나라도 에러 발생시 true
   };
 }

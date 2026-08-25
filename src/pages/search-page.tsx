@@ -8,9 +8,19 @@ import { useState, type FormEvent } from "react";
 export default function SearchPage() {
   const [inputNickName, setInputNickName] = useState<string>(""); // input 창 텍스트 실시간 저장
   const [searchTarget, setSearchTarget] = useState<string>(""); // 검색 버튼을 눌렀을 때만 업데이트되는 실제 검색어
+  const [selectedMatchType, setSelectedMatchType] = useState<number>(50);
 
-  const { ouid, matchDetails, isLoading, isError, error } =
-    useUserMatches(searchTarget);
+  const {
+    ouid,
+    matchDetails = [],
+    matchTypes = [],
+    maxDivision = [],
+    isLoading,
+    isError,
+    error,
+  } = useUserMatches(searchTarget, selectedMatchType);
+
+  console.log(maxDivision);
 
   async function handSubmit(e: FormEvent) {
     e.preventDefault();
@@ -68,7 +78,30 @@ export default function SearchPage() {
             {getErrorMessage()}
           </p>
         )}
-        {ouid && matchDetails.length > 0 && (
+
+        <div className="space-y-4 border-t pt-4">
+          {Array.isArray(matchTypes) && matchTypes.length > 0 ? (
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {matchTypes.map((type: { matchtype: number; desc: string }) => (
+                <Button
+                  key={type.matchtype}
+                  variant={
+                    selectedMatchType === type.matchtype ? "default" : "outline"
+                  }
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => setSelectedMatchType(type.matchtype)}
+                >
+                  {type.desc}
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+
+        {matchDetails.length > 0 ? (
           <div className="space-y-3 border-t pt-3">
             <p className="text-muted-foreground text-xs font-semibold">
               최근 매치 기록
@@ -104,6 +137,12 @@ export default function SearchPage() {
               );
             })}
           </div>
+        ) : (
+          !isLoading && (
+            <p className="text-muted-foreground py-4 text-xs">
+              해당 매치 타입의 경기 기록이 없습니다.
+            </p>
+          )
         )}
       </div>
     </div>

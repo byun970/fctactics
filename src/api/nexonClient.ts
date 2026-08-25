@@ -1,4 +1,4 @@
-import type { MatchDetail } from "@/types/nexon";
+import type { MatchDetail, MatchTypeMeta, MaxDivision } from "@/types/nexon";
 import axios from "axios";
 
 const NEXON_API_KEY = import.meta.env.VITE_NEXON_API_KEY;
@@ -32,6 +32,20 @@ export async function getMatchIds(
 export async function getMatchDetail(matchid: string): Promise<MatchDetail> {
   const response = await nexonClient.get("/match-detail", {
     params: { matchid },
+  });
+  return response.data;
+}
+
+export async function getMatchType(): Promise<MatchTypeMeta[]> {
+  const response = await axios.get(
+    "https://open.api.nexon.com/static/fconline/meta/matchtype.json",
+  );
+  return response.data;
+}
+
+export async function getMaxDivision(ouid: string): Promise<MaxDivision[]> {
+  const response = await nexonClient.get("/user/maxdivision", {
+    params: { ouid },
   });
   return response.data;
 }

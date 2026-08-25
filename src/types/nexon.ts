@@ -80,3 +80,9 @@ export interface RankerStat {
   status: PlayerStatus;
   createDate: string;
 }
+
+export interface MaxDivision {
+  matchType: number;
+  division: number;
+  achievementDate: string;
+}
