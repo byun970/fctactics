@@ -1,4 +1,5 @@
 import { MatchList } from "@/components/MatchList";
+import { MatchModal } from "@/components/MatchModal";
 import { MatchTypeFilter } from "@/components/MatchTypeFilter";
 import { SearchForm } from "@/components/SearchForm";
 import { useUserMatches } from "@/hooks/useUserMatches";
@@ -45,13 +46,7 @@ export default function SearchPage() {
           </p>
         )}
 
-        <MatchTypeFilter matchTypes={matchTypes} />
-
-        <MatchList
-          matchDetails={matchDetails}
-          ouid={ouid}
-          isLoading={isLoading}
-        />
+        <MatchModal />
       </div>
     </div>
   );

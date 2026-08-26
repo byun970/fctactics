@@ -13,11 +13,13 @@ export function SearchForm({ isLoading }: SearchFormProps) {
 
   const setInputNickName = useSearchStore((state) => state.setInputNickName);
   const setSearchTarget = useSearchStore((state) => state.setSearchTarget);
+  const setIsModalOpen = useSearchStore((state) => state.setIsModalOpen);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!inputNickName.trim()) return;
     setSearchTarget(inputNickName.trim());
+    setIsModalOpen(true);
   };
 
   return (

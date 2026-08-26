@@ -1,9 +1,6 @@
 import { Link, NavLink } from "react-router";
 
-const NAV_ITEMS = [
-  { path: "/search", label: "전적검색" },
-  { path: "/tierlist", label: "선수 티어리스트" },
-];
+const NAV_ITEMS = [{ path: "/tierlist", label: "선수 티어리스트" }];
 
 export default function Header() {
   return (
