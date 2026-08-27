@@ -4,12 +4,14 @@ import IndexPage from "./pages/index-page";
 import SearchPage from "./pages/search-page";
 import { TierListPage } from "./pages/tier-list-page";
 import Layout from "./components/Layout";
+import { SearchResultPage } from "./pages/search-result-page";
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<SearchPage />} />
+        <Route path="/search/:nickname" element={<SearchResultPage />} />
         <Route path="/tierlist" element={<TierListPage />} />
       </Route>
     </Routes>

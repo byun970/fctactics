@@ -1,25 +1,36 @@
 import { Loader2, Search } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import type { FormEvent } from "react";
+import { useEffect, type FormEvent } from "react";
 import { useSearchStore } from "@/stores/useSearchStore";
+import { useNavigate, useParams } from "react-router";
 
 interface SearchFormProps {
   isLoading: boolean;
 }
 
 export function SearchForm({ isLoading }: SearchFormProps) {
+  const { nickname } = useParams<{ nickname: string }>();
   const inputNickName = useSearchStore((state) => state.inputNickName);
+  const naviagate = useNavigate();
 
   const setInputNickName = useSearchStore((state) => state.setInputNickName);
   const setSearchTarget = useSearchStore((state) => state.setSearchTarget);
   const setIsModalOpen = useSearchStore((state) => state.setIsModalOpen);
 
+  useEffect(() => {
+    if (nickname) {
+      const decoded = decodeURIComponent(nickname);
+      setInputNickName(decoded);
+      setSearchTarget(decoded);
+    }
+  }, [nickname, setInputNickName, setSearchTarget]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!inputNickName.trim()) return;
     setSearchTarget(inputNickName.trim());
-    setIsModalOpen(true);
+    naviagate(`/search/${encodeURIComponent(inputNickName.trim())}`);
   };
 
   return (
@@ -37,7 +48,7 @@ export function SearchForm({ isLoading }: SearchFormProps) {
         <Button
           size="lg"
           disabled={isLoading}
-          className="h-12 px-6 font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="h-12 cursor-pointer px-6 font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
           type="submit"
         >
           {isLoading ? (

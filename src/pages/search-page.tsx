@@ -1,14 +1,13 @@
-import { MatchList } from "@/components/MatchList";
-import { MatchModal } from "@/components/MatchModal";
-import { MatchTypeFilter } from "@/components/MatchTypeFilter";
 import { SearchForm } from "@/components/SearchForm";
 import { useUserMatches } from "@/hooks/useUserMatches";
 import { useSearchStore } from "@/stores/useSearchStore";
 import axios from "axios";
+import { useParams, useSearchParams } from "react-router";
 
 export default function SearchPage() {
-  const searchTarget = useSearchStore((state) => state.searchTarget);
+  const { nickname } = useParams<{ nickname: string }>();
   const selectedMatchType = useSearchStore((state) => state.selectedMatchType);
+  const searchTarget = nickname ? decodeURIComponent(nickname) : "";
 
   const {
     ouid,
@@ -20,13 +19,6 @@ export default function SearchPage() {
     error,
   } = useUserMatches(searchTarget, selectedMatchType);
 
-  const getErrorMessage = () => {
-    if (!isError) return null;
-    if (axios.isAxiosError(error) && error.response?.status === 400) {
-      return "존재하지 않는 구단주입니다.";
-    }
-    return "데이터를 불러오는 중 오류가 발생했습니다.";
-  };
   return (
     <div className="from-background via-muted/50 to-background flex min-h-screen flex-col items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6 text-center">
@@ -39,14 +31,7 @@ export default function SearchPage() {
           </p>
         </div>
 
-        <SearchForm isLoading={isLoading} />
-        {isError && (
-          <p className="text-destructive text-sm font-medium">
-            {getErrorMessage()}
-          </p>
-        )}
-
-        <MatchModal />
+        <SearchForm isLoading={false} />
       </div>
     </div>
   );
