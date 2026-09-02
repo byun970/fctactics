@@ -56,7 +56,7 @@ export function SearchResultPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4">
+    <div className="mx-auto max-w-5xl space-y-4 p-4">
       <div className="flex items-center justify-between border-b pb-2">
         <h1 className="text-xl font-bold">{decodedNickname}</h1>
         <Button asChild variant="outline" size="sm">

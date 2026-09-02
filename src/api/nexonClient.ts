@@ -21,7 +21,7 @@ export async function getMatchIds(
   ouid: string,
   matchtype: number = 52,
   offset: number = 0,
-  limit: number = 5,
+  limit: number = 20,
 ): Promise<string[]> {
   const response = await nexonClient.get("/user/match", {
     params: { ouid, matchtype, offset, limit },

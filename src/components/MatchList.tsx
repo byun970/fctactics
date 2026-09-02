@@ -1,12 +1,25 @@
 import type { MatchDetail } from "@/types/nexon";
 import { MatchItem } from "./MatchItem";
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 interface MatchListProps {
   matchDetails: MatchDetail[];
   ouid?: string;
 }
 
+const PAGE_SIZE = 5;
+
 export function MatchList({ matchDetails, ouid }: MatchListProps) {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  const visibleMatches = matchDetails.slice(0, visibleCount);
+  const hasMore = visibleCount < matchDetails.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount((prevCount) => prevCount + PAGE_SIZE);
+  };
+
   if (matchDetails.length === 0) {
     return (
       <p className="text-muted-foreground py-8 text-center text-xs">
@@ -20,9 +33,20 @@ export function MatchList({ matchDetails, ouid }: MatchListProps) {
       <p className="text-muted-foreground text-xs font-semibold">
         최근 매치 기록
       </p>
-      {matchDetails.map((match) => {
+      {visibleMatches.map((match) => {
         return <MatchItem key={match.matchId} match={match} ouid={ouid} />;
       })}
+
+      <div className="flex justify-center py-4">
+        {hasMore && (
+          <Button
+            className="cursor-pointer bg-blue-500 hover:bg-blue-600"
+            onClick={handleLoadMore}
+          >
+            더보기
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

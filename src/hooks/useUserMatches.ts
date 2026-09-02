@@ -36,7 +36,7 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
   // 매치 아이디 목록 조회
   const matchIdsQuery = useQuery({
     queryKey: ["matchIds", ouid, matchType],
-    queryFn: () => getMatchIds(ouid!, matchType, 0, 5),
+    queryFn: () => getMatchIds(ouid!, matchType, 0, 20),
     enabled: !!ouid, // ouid를 성공적으로 받아오면 실행
     staleTime: 1000 * 60 * 5,
     retry: false,

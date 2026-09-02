@@ -30,7 +30,31 @@ export interface MatchInfo {
     possession?: number;
     [key: string]: any;
   };
+  player: Player[];
   shoot?: ShootInfo;
+}
+
+export interface Player {
+  spId: number;
+  spPosition: number;
+  spGrade: number;
+  status: IndividualPlayerStatus;
+}
+
+export interface IndividualPlayerStatus {
+  shoot: number;
+  effectiveShoot: number;
+  assist: number;
+  goal: number;
+  dribble: number;
+  dribbleTry: number;
+  dribbleSuccess: number;
+  passTry: number;
+  passSuccess: number;
+  block: number;
+  tackle: number;
+  matchCount?: number;
+  rating?: number; // 선수 평점
 }
 
 export interface ShootInfo {
