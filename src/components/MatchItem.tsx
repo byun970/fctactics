@@ -1,13 +1,23 @@
-import { type MatchDetail, type Player } from "@/types/nexon";
+import {
+  type MatchDetail,
+  type Player,
+  type PositionMeta,
+} from "@/types/nexon";
 import { useState } from "react";
 import { PlayerImage } from "./PlayerImage";
+import {
+  DEFAULT_POSITION_CONFIG,
+  POSITION_GRID_MAP,
+} from "@/constants/position";
+import { FieldLayout } from "./FieldLayout";
 
 interface MatchItemProps {
   match: MatchDetail;
   ouid?: string;
+  sppositionMap?: Record<number, string>;
 }
 
-export function MatchItem({ match, ouid }: MatchItemProps) {
+export function MatchItem({ match, ouid, sppositionMap }: MatchItemProps) {
   const myInfo =
     match.matchInfo.find((m) => m.ouid === ouid) ?? match.matchInfo[0];
   const opponentInfo = match.matchInfo.find((m) => m.ouid !== ouid);
@@ -25,13 +35,13 @@ export function MatchItem({ match, ouid }: MatchItemProps) {
   const result = myInfo?.matchDetail?.matchResult;
   const currentResult = result ? resultConfig[result] : null;
 
-  console.log("전달받은 ouid: ", ouid);
-  console.log(
-    "매치 내 ouid 목록: ",
-    match.matchInfo.map((m) => m.ouid),
+  const actualMyPlayers: Player[] = myPlayers.filter(
+    (player) => player.spPosition !== 28 && player.status,
   );
-  console.log("나의 정보: ", myInfo);
-  console.log("myplayers 배열: ", myPlayers);
+
+  const actualOppenentPlayers: Player[] = opponentPlayers.filter(
+    (player) => player.spPosition !== 28 && player.status,
+  );
 
   return (
     <>
@@ -62,17 +72,18 @@ export function MatchItem({ match, ouid }: MatchItemProps) {
       </div>
 
       {hasClicked && (
-        <div>
-          {myPlayers.map((player, idx) => (
-            <div
-              key={`${player.spId}-${idx}`}
-              className="flex items-center gap-2"
-            >
-              <PlayerImage spid={player.spId} />
-              <p>{player.spGrade}</p>
-              <p>{player.status.goal}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FieldLayout
+            title={myInfo?.nickname ?? "내 스쿼드"}
+            players={actualMyPlayers}
+            sppositionMap={sppositionMap}
+          />
+          <FieldLayout
+            title={opponentInfo?.nickname ?? "상대 스쿼드"}
+            players={actualOppenentPlayers}
+            sppositionMap={sppositionMap}
+            isOpponent
+          />
         </div>
       )}
     </>

@@ -4,6 +4,7 @@ import {
   getMatchType,
   getMaxDivision,
   getOuid,
+  getSppostionMeta,
 } from "@/api/nexonClient";
 import type { MatchDetail } from "@/types/nexon";
 import { useQuery } from "@tanstack/react-query";
@@ -70,28 +71,42 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
     staleTime: 1000 * 60 * 10,
   });
 
+  const sppositionMetaQuery = useQuery({
+    queryKey: ["sppositionMeta"],
+    queryFn: () => getSppostionMeta(),
+    staleTime: Infinity,
+    select: (data) =>
+      data.reduce<Record<number, string>>((acc, item) => {
+        acc[item.spposition] = item.desc;
+        return acc;
+      }, {}),
+  });
   return {
     ouid,
     matchDetails: matchDetailsQuery.data ?? [],
     matchTypes: matchTypesQuery.data ?? [],
     maxDivision: maxDivisionQuery.data ?? [],
+    sppositionMap: sppositionMetaQuery.data ?? [],
     isLoading:
       ouidQuery.isLoading ||
       matchIdsQuery.isLoading ||
       matchDetailsQuery.isLoading || // 하나라도 로딩 발생시 true
       matchTypesQuery.isLoading ||
-      maxDivisionQuery.isLoading,
+      maxDivisionQuery.isLoading ||
+      sppositionMetaQuery.isLoading,
     isError:
       ouidQuery.isError ||
       matchIdsQuery.isError ||
       matchDetailsQuery.isError ||
       matchTypesQuery.isError ||
-      maxDivisionQuery.isError,
+      maxDivisionQuery.isError ||
+      sppositionMetaQuery.isError,
     error:
       ouidQuery.error ||
       matchIdsQuery.error ||
       matchDetailsQuery.error ||
       matchTypesQuery.error ||
-      maxDivisionQuery.error, // 하나라도 에러 발생시 true
+      maxDivisionQuery.error ||
+      sppositionMetaQuery.error, // 하나라도 에러 발생시 true
   };
 }

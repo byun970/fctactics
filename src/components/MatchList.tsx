@@ -1,4 +1,4 @@
-import type { MatchDetail } from "@/types/nexon";
+import type { MatchDetail, PositionMeta } from "@/types/nexon";
 import { MatchItem } from "./MatchItem";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -6,11 +6,16 @@ import { Button } from "./ui/button";
 interface MatchListProps {
   matchDetails: MatchDetail[];
   ouid?: string;
+  sppositionMeta?: PositionMeta[];
 }
 
 const PAGE_SIZE = 5;
 
-export function MatchList({ matchDetails, ouid }: MatchListProps) {
+export function MatchList({
+  matchDetails,
+  ouid,
+  sppositionMeta,
+}: MatchListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const visibleMatches = matchDetails.slice(0, visibleCount);

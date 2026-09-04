@@ -38,7 +38,7 @@ export function PlayerImage({ spid, name, className }: PlayerImageProps) {
     <img
       src={imgSrc}
       alt={name || "player"}
-      className={`object-contain ${className}`}
+      className={`object-contain ${className} w-20`}
       loading="lazy"
       onError={handleError}
     />
