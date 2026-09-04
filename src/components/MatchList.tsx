@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 interface MatchListProps {
   matchDetails: MatchDetail[];
   ouid?: string;
-  sppositionMeta?: PositionMeta[];
+  sppositionMap?: Record<number, string>;
 }
 
 const PAGE_SIZE = 5;
@@ -14,7 +14,7 @@ const PAGE_SIZE = 5;
 export function MatchList({
   matchDetails,
   ouid,
-  sppositionMeta,
+  sppositionMap,
 }: MatchListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -39,7 +39,14 @@ export function MatchList({
         최근 매치 기록
       </p>
       {visibleMatches.map((match) => {
-        return <MatchItem key={match.matchId} match={match} ouid={ouid} />;
+        return (
+          <MatchItem
+            key={match.matchId}
+            match={match}
+            ouid={ouid}
+            sppositionMap={sppositionMap}
+          />
+        );
       })}
 
       <div className="flex justify-center py-4">

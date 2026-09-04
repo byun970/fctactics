@@ -18,6 +18,7 @@ export function FieldLayout({
   sppositionMap,
   isOpponent = false,
 }: FieldLayoutProps) {
+  console.log(sppositionMap);
   return (
     <div className="flex flex-col gap-2">
       <h4 className="text-muted-foreground text-center text-sm font-semibold">

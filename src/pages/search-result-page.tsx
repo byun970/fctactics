@@ -17,6 +17,7 @@ export function SearchResultPage() {
     matchDetails = [],
     matchTypes = [],
     maxDivision = [],
+    sppositionMap = [],
     isLoading,
     isError,
     error,
@@ -66,7 +67,11 @@ export function SearchResultPage() {
         </Button>
       </div>
       {ouid && <MatchTypeFilter matchTypes={matchTypes} />}
-      <MatchList matchDetails={matchDetails} ouid={ouid} />
+      <MatchList
+        matchDetails={matchDetails}
+        ouid={ouid}
+        sppositionMap={sppositionMap}
+      />
     </div>
   );
 }
