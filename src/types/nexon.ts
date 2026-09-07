@@ -8,6 +8,11 @@ export interface PositionMeta {
   desc: string;
 }
 
+export interface DivisionMeta {
+  divisionId: number;
+  divisionName: string;
+}
+
 export interface PlayerMeta {
   id: number;
   name: string;
@@ -54,7 +59,7 @@ export interface IndividualPlayerStatus {
   block: number;
   tackle: number;
   matchCount?: number;
-  rating?: number; // 선수 평점
+  spRating?: number;
 }
 
 export interface ShootInfo {

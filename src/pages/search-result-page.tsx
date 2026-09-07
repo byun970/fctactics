@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MatchItem } from "@/components/MatchItem";
 import { MatchList } from "@/components/MatchList";
 import axios from "axios";
+import type { DivisionMeta } from "@/types/nexon";
 export function SearchResultPage() {
   const { nickname } = useParams<{ nickname: string }>();
   const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
@@ -18,10 +19,21 @@ export function SearchResultPage() {
     matchTypes = [],
     maxDivision = [],
     sppositionMap = [],
+    division = [],
     isLoading,
     isError,
     error,
   } = useUserMatches(decodedNickname, selectedMatchType);
+
+  console.log(division);
+
+  const userMaxDivisionId = maxDivision[0]?.division;
+
+  const matchedDivision = division.find(
+    (item: DivisionMeta) => item.divisionId == userMaxDivisionId,
+  );
+
+  const divisionName = matchedDivision?.divisionName ?? "기록 없음";
 
   if (isLoading)
     return (
@@ -59,7 +71,12 @@ export function SearchResultPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-4 p-4">
       <div className="flex items-center justify-between border-b pb-2">
-        <h1 className="text-xl font-bold">{decodedNickname}</h1>
+        <h1 className="text-xl font-bold">
+          {decodedNickname}{" "}
+          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            {divisionName}
+          </span>
+        </h1>
         <Button asChild variant="outline" size="sm">
           <Link to="/" className="text-muted-foreground text-xs">
             다시 검색

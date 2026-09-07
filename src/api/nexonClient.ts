@@ -1,4 +1,5 @@
 import type {
+  DivisionMeta,
   MatchDetail,
   MatchTypeMeta,
   MaxDivision,
@@ -58,6 +59,13 @@ export async function getMaxDivision(ouid: string): Promise<MaxDivision[]> {
 export async function getSppostionMeta(): Promise<PositionMeta[]> {
   const response = await axios.get(
     "https://open.api.nexon.com/static/fconline/meta/spposition.json",
+  );
+  return response.data;
+}
+
+export async function getDivisionMeta(): Promise<DivisionMeta[]> {
+  const response = await axios.get(
+    "https://open.api.nexon.com/static/fconline/meta/division.json",
   );
   return response.data;
 }

@@ -1,4 +1,5 @@
 import {
+  getDivisionMeta,
   getMatchDetail,
   getMatchIds,
   getMatchType,
@@ -81,32 +82,43 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
         return acc;
       }, {}),
   });
+
+  const divisionMetaQuery = useQuery({
+    queryKey: ["divisionMeta"],
+    queryFn: () => getDivisionMeta(),
+    staleTime: Infinity,
+  });
+
   return {
     ouid,
     matchDetails: matchDetailsQuery.data ?? [],
     matchTypes: matchTypesQuery.data ?? [],
     maxDivision: maxDivisionQuery.data ?? [],
     sppositionMap: sppositionMetaQuery.data ?? [],
+    division: divisionMetaQuery.data ?? [],
     isLoading:
       ouidQuery.isLoading ||
       matchIdsQuery.isLoading ||
       matchDetailsQuery.isLoading || // 하나라도 로딩 발생시 true
       matchTypesQuery.isLoading ||
       maxDivisionQuery.isLoading ||
-      sppositionMetaQuery.isLoading,
+      sppositionMetaQuery.isLoading ||
+      divisionMetaQuery.isLoading,
     isError:
       ouidQuery.isError ||
       matchIdsQuery.isError ||
       matchDetailsQuery.isError ||
       matchTypesQuery.isError ||
       maxDivisionQuery.isError ||
-      sppositionMetaQuery.isError,
+      sppositionMetaQuery.isError ||
+      divisionMetaQuery.isError,
     error:
       ouidQuery.error ||
       matchIdsQuery.error ||
       matchDetailsQuery.error ||
       matchTypesQuery.error ||
       maxDivisionQuery.error ||
-      sppositionMetaQuery.error, // 하나라도 에러 발생시 true
+      sppositionMetaQuery.error ||
+      divisionMetaQuery.error, // 하나라도 에러 발생시 true
   };
 }
