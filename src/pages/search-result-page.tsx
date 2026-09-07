@@ -4,7 +4,6 @@ import { MatchTypeFilter } from "@/components/MatchTypeFilter";
 import { Loader2 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { Button } from "@/components/ui/button";
-import { MatchItem } from "@/components/MatchItem";
 import { MatchList } from "@/components/MatchList";
 import axios from "axios";
 import type { DivisionMeta } from "@/types/nexon";
@@ -18,19 +17,17 @@ export function SearchResultPage() {
     matchDetails = [],
     matchTypes = [],
     maxDivision = [],
-    sppositionMap = [],
+    sppositionMap = {},
     division = [],
     isLoading,
     isError,
     error,
   } = useUserMatches(decodedNickname, selectedMatchType);
 
-  console.log(division);
-
   const userMaxDivisionId = maxDivision[0]?.division;
 
   const matchedDivision = division.find(
-    (item: DivisionMeta) => item.divisionId == userMaxDivisionId,
+    (item: DivisionMeta) => item.divisionId === userMaxDivisionId,
   );
 
   const divisionName = matchedDivision?.divisionName ?? "기록 없음";

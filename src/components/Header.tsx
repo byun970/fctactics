@@ -1,6 +1,4 @@
-import { Link, NavLink } from "react-router";
-
-const NAV_ITEMS = [{ path: "/tierlist", label: "선수 티어리스트" }];
+import { Link } from "react-router";
 
 export default function Header() {
   return (
@@ -10,21 +8,6 @@ export default function Header() {
           <Link to="/" className="p-3 text-4xl font-bold text-white">
             FCTACTICS
           </Link>
-          <nav className="flex gap-4">
-            {NAV_ITEMS.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  `text-white transition-colors hover:text-blue-100 ${
-                    isActive ? "font-bold underline" : "opacity-90"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
         </div>
       </div>
     </header>

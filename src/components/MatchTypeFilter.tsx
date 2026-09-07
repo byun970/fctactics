@@ -16,7 +16,7 @@ export function MatchTypeFilter({ matchTypes }: MatchTypeFilterProps) {
     return null;
   }
   return (
-    <div className="space-y-4 border-t pt-4">
+    <div className="space-y-4">
       <div className="flex flex-wrap justify-center gap-1.5">
         {matchTypes.map((type) => (
           <Button

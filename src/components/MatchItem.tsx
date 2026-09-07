@@ -1,14 +1,6 @@
-import {
-  type MatchDetail,
-  type Player,
-  type PositionMeta,
-} from "@/types/nexon";
+import { type MatchDetail, type Player } from "@/types/nexon";
 import { useState } from "react";
-import { PlayerImage } from "./PlayerImage";
-import {
-  DEFAULT_POSITION_CONFIG,
-  POSITION_GRID_MAP,
-} from "@/constants/position";
+
 import { FieldLayout } from "./FieldLayout";
 
 interface MatchItemProps {
