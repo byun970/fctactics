@@ -36,7 +36,7 @@ export function FieldLayout({
         {title}
       </h4>
 
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl border-2 border-emerald-600/60 bg-emerald-800 p-2 shadow-inner">
+      <div className="relative aspect-3/4 w-full overflow-hidden rounded-xl border-2 border-emerald-600/60 bg-emerald-800 p-2 shadow-inner">
         <svg
           className="pointer-events-none absolute inset-0 h-full w-full stroke-white/30"
           strokeWidth="1.5"
