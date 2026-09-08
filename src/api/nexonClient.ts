@@ -7,41 +7,22 @@ import type {
 } from "@/types/nexon";
 import axios from "axios";
 
+const NEXON_API_KEY = import.meta.env.VITE_NEXON_API_KEY;
+
 export const nexonClient = axios.create({
-  baseURL: "https://open.api.nexon.com/fconline/v1",
+  baseURL: "/api/fconline/v1",
+  headers: {
+    "x-nxopen-api-key": NEXON_API_KEY,
+  },
 });
 
-// 요청 직전에 API Key를 헤더에 주입 (환경 변수 누락 방지)
-nexonClient.interceptors.request.use((config) => {
-  const apiKey = import.meta.env.VITE_NEXON_API_KEY;
-  if (apiKey) {
-    config.headers["x-nxopen-api-key"] = apiKey;
-  }
-  return config;
-});
-
-// 1. ouid 조회
 export const getOuid = async (nickname: string) => {
-  const apiKey = import.meta.env.VITE_NEXON_API_KEY;
-  const cleanName = nickname.trim();
-
-  const response = await fetch(
-    `https://open.api.nexon.com/fconline/v1/id?nickname=${encodeURIComponent(cleanName)}`,
-    {
-      headers: {
-        "x-nxopen-api-key": apiKey,
-      },
-    },
-  );
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || "Failed to fetch ouid");
-  }
-
-  return response.json();
+  const response = await nexonClient.get<{ ouid: string }>("/id", {
+    params: { nickname },
+  });
+  return response.data;
 };
-// 2. 매치 ID 목록 조회
+
 export async function getMatchIds(
   ouid: string,
   matchtype: number = 52,
@@ -54,9 +35,8 @@ export async function getMatchIds(
   return response.data;
 }
 
-// 3. 매치 상세 조회 (⚠️ 파라미터명을 matchid 소문자로 복구)
 export async function getMatchDetail(matchid: string): Promise<MatchDetail> {
-  const response = await nexonClient.get("/match", {
+  const response = await nexonClient.get("/match-detail", {
     params: { matchid },
   });
   return response.data;
