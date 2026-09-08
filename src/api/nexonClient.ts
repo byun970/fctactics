@@ -3,6 +3,7 @@ import type {
   MatchDetail,
   MatchTypeMeta,
   MaxDivision,
+  PlayerMeta,
   PositionMeta,
 } from "@/types/nexon";
 import axios from "axios";
@@ -69,3 +70,35 @@ export async function getDivisionMeta(): Promise<DivisionMeta[]> {
   );
   return response.data;
 }
+
+export async function getSpidMeta(): Promise<PlayerMeta[]> {
+  const response = await axios.get(
+    "https://open.api.nexon.com/static/fconline/meta/spid.json",
+  );
+  return response.data;
+}
+
+export const nexonApi = axios.create({
+  baseURL: "https://open.api.nexon.com", // 또는 설정하신 Proxy URL
+});
+
+nexonApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const { config, response } = error;
+
+    if (response?.status === 429 && config) {
+      config._retryCount = config._retryCount || 0;
+
+      if (config._retryCount < 3) {
+        config._retryCount += 1;
+
+        const waitTime = Math.pow(2, config._retryCount) * 1000;
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+
+        return nexonApi(config);
+      }
+    }
+    return Promise.reject(error);
+  },
+);

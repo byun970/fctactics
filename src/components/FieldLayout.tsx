@@ -5,6 +5,8 @@ import {
   POSITION_GRID_MAP,
   getPositionColorClass,
 } from "@/constants/position";
+import { useNexonMetaData } from "@/hooks/useUserMatches";
+import { useMemo } from "react";
 
 interface FieldLayoutProps {
   title: string;
@@ -20,6 +22,17 @@ export function FieldLayout({
   isOpponent = false,
 }: FieldLayoutProps) {
   const mainPlayers = players.filter((p) => p.spPosition !== 28);
+
+  const { spid = [] } = useNexonMetaData();
+
+  const spidNameMap = useMemo(() => {
+    return spid.reduce<Record<number, string>>((acc, item) => {
+      if (item && item.id) {
+        acc[item.id] = item.name;
+      }
+      return acc;
+    }, {});
+  }, [spid]);
 
   const ratings = mainPlayers
     .map((p) => Number(p.status?.spRating ?? 0))
@@ -81,6 +94,8 @@ export function FieldLayout({
             const isMax = hasRatingDiff && currentRating === maxRating;
             const isMin = hasRatingDiff && currentRating === minRating;
 
+            const playerName = spidNameMap[player?.spId] ?? "정보없음";
+
             let ratingColorClass = "text-white/90";
             if (isMax) {
               ratingColorClass =
@@ -115,9 +130,9 @@ export function FieldLayout({
                 </div>
 
                 <div
-                  className={`w-full truncate text-[9px] leading-tight font-medium`}
+                  className={`w-full truncate text-[9px] leading-tight font-medium text-white/90`}
                 >
-                  {player.spId}
+                  {playerName}
                 </div>
 
                 <div

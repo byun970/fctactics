@@ -5,41 +5,74 @@ import {
   getMatchType,
   getMaxDivision,
   getOuid,
+  getSpidMeta,
   getSppostionMeta,
 } from "@/api/nexonClient";
 import type { MatchDetail } from "@/types/nexon";
 import { useQuery } from "@tanstack/react-query";
 
-export function useMatchType() {
-  return useQuery({
+export function useNexonMetaData() {
+  const matchTypesQuery = useQuery({
     queryKey: ["matchTypes"],
     queryFn: getMatchType,
     staleTime: Infinity,
   });
+
+  const sppositionMetaQuery = useQuery({
+    queryKey: ["sppositionMeta"],
+    queryFn: getSppostionMeta,
+    staleTime: Infinity,
+    select: (data) =>
+      data?.reduce<Record<number, string>>((acc, item) => {
+        if (item && typeof item.spposition === "number") {
+          acc[item.spposition] = item.desc;
+        }
+        return acc;
+      }, {}) ?? {},
+  });
+
+  const divisionMetaQuery = useQuery({
+    queryKey: ["divisionMeta"],
+    queryFn: getDivisionMeta,
+    staleTime: Infinity,
+  });
+
+  const spidMetaQuery = useQuery({
+    queryKey: ["spidMeta"],
+    queryFn: getSpidMeta,
+    staleTime: Infinity,
+  });
+
+  return {
+    matchTypes: matchTypesQuery.data ?? [],
+    division: divisionMetaQuery.data ?? [],
+    spid: spidMetaQuery.data ?? [],
+    sppositionMap: sppositionMetaQuery.data ?? {},
+    isMetaLoading:
+      matchTypesQuery.isLoading ||
+      sppositionMetaQuery.isLoading ||
+      divisionMetaQuery.isLoading ||
+      spidMetaQuery.isLoading,
+  };
 }
 
 export function useUserMatches(nickname: string, matchType: number = 50) {
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const meta = useNexonMetaData();
 
-  const matchTypesQuery = useMatchType();
-
-  // ouid 조회
   const ouidQuery = useQuery({
     queryKey: ["ouid", nickname],
     queryFn: () => getOuid(nickname),
-    enabled: !!nickname, // 존재할 때만 실행
-    staleTime: 1000 * 60 * 10, // 10분간 캐싱
-    retry: false, // 400 에러 재시도 방지(존재하지 않는 유저)
+    enabled: !!nickname,
+    staleTime: 1000 * 60 * 10,
+    retry: false,
   });
 
   const ouid = ouidQuery.data?.ouid;
 
-  // 매치 아이디 목록 조회
   const matchIdsQuery = useQuery({
     queryKey: ["matchIds", ouid, matchType],
     queryFn: () => getMatchIds(ouid!, matchType, 0, 20),
-    enabled: !!ouid, // ouid를 성공적으로 받아오면 실행
+    enabled: !!ouid,
     staleTime: 1000 * 60 * 5,
     retry: false,
   });
@@ -47,78 +80,51 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
   const matchIds = matchIdsQuery.data ?? [];
 
   const matchDetailsQuery = useQuery({
-    queryKey: ["matchDetails", matchIds],
+    queryKey: ["matchDetails", matchIds.join(",")], // 참조값 대신 문자열 키 사용
     queryFn: async () => {
-      const details: MatchDetail[] = [];
+      const results: MatchDetail[] = [];
+
       for (const id of matchIds) {
         const detail = await getMatchDetail(id);
-        details.push(detail);
-        await delay(50); // 5개의 매치정보를 0.05초 간격을 두고 순차적으로 요청
+        results.push(detail);
+        // 요청 간 100ms 강제 대기
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
-      return details;
+      return results;
     },
-    enabled: matchIds.length > 0, // 매치 id 배열이 비어있지 않을 때만 실행
+    enabled: matchIds.length > 0,
     staleTime: 1000 * 60 * 5,
-    retry: (failureCount, error: any) => {
-      if (error?.response?.status === 429) return false; // 429에러 시 즉시 중단
-      return failureCount < 2; // 일반 에러-> 2회 재시도
-    },
+    refetchOnWindowFocus: false, // 탭 전환 시 자동 재요청으로 인한 429 방지
+    retry: false,
   });
 
   const maxDivisionQuery = useQuery({
     queryKey: ["maxDivision", ouid],
     queryFn: () => getMaxDivision(ouid!),
-    enabled: !!ouid, //ouid가 확보된 후 요청 실행
+    enabled: !!ouid,
     staleTime: 1000 * 60 * 10,
-  });
-
-  const sppositionMetaQuery = useQuery({
-    queryKey: ["sppositionMeta"],
-    queryFn: () => getSppostionMeta(),
-    staleTime: Infinity,
-    select: (data) =>
-      data.reduce<Record<number, string>>((acc, item) => {
-        acc[item.spposition] = item.desc;
-        return acc;
-      }, {}),
-  });
-
-  const divisionMetaQuery = useQuery({
-    queryKey: ["divisionMeta"],
-    queryFn: () => getDivisionMeta(),
-    staleTime: Infinity,
   });
 
   return {
     ouid,
     matchDetails: matchDetailsQuery.data ?? [],
-    matchTypes: matchTypesQuery.data ?? [],
     maxDivision: maxDivisionQuery.data ?? [],
-    sppositionMap: sppositionMetaQuery.data ?? [],
-    division: divisionMetaQuery.data ?? [],
+    meta, // 메타데이터 일괄 반환
     isLoading:
       ouidQuery.isLoading ||
       matchIdsQuery.isLoading ||
-      matchDetailsQuery.isLoading || // 하나라도 로딩 발생시 true
-      matchTypesQuery.isLoading ||
+      matchDetailsQuery.isLoading ||
       maxDivisionQuery.isLoading ||
-      sppositionMetaQuery.isLoading ||
-      divisionMetaQuery.isLoading,
+      meta.isMetaLoading,
     isError:
       ouidQuery.isError ||
       matchIdsQuery.isError ||
       matchDetailsQuery.isError ||
-      matchTypesQuery.isError ||
-      maxDivisionQuery.isError ||
-      sppositionMetaQuery.isError ||
-      divisionMetaQuery.isError,
+      maxDivisionQuery.isError,
     error:
       ouidQuery.error ||
       matchIdsQuery.error ||
       matchDetailsQuery.error ||
-      matchTypesQuery.error ||
-      maxDivisionQuery.error ||
-      sppositionMetaQuery.error ||
-      divisionMetaQuery.error, // 하나라도 에러 발생시 true
+      maxDivisionQuery.error,
   };
 }
