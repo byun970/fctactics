@@ -10,18 +10,17 @@ import axios from "axios";
 const NEXON_API_KEY = import.meta.env.VITE_NEXON_API_KEY;
 
 export const nexonClient = axios.create({
-  baseURL: "https://open.api.nexon.com/fconline/v1", // Vercel rewrite 대신 직접 호출하거나 CORS 시 relative path 유지
+  baseURL: "https://open.api.nexon.com/fconline/v1",
   headers: {
     "x-nxopen-api-key": NEXON_API_KEY,
   },
 });
 
-// 1. ouid 조회 (한글 닉네임 인코딩 필수)
+// 1. ouid 조회 (axios params 이용)
 export const getOuid = async (nickname: string) => {
-  const encodedNickname = encodeURIComponent(nickname.trim());
-  const response = await nexonClient.get<{ ouid: string }>(
-    `/id?nickname=${encodedNickname}`,
-  );
+  const response = await nexonClient.get<{ ouid: string }>("/id", {
+    params: { nickname: nickname.trim() },
+  });
   return response.data;
 };
 
@@ -38,11 +37,10 @@ export async function getMatchIds(
   return response.data;
 }
 
-// 3. 매치 상세 조회
+// 3. 매치 상세 조회 (matchId 대소문자 수정)
 export async function getMatchDetail(matchid: string): Promise<MatchDetail> {
   const response = await nexonClient.get("/match", {
-    // ⚠️ 기존 /match-detail -> /match 로 수정 (넥슨 FC온라인 공식 Endpoint는 /match 입니다)
-    params: { matchid },
+    params: { matchId: matchid }, // matchid -> matchId
   });
   return response.data;
 }
