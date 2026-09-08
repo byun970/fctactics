@@ -23,9 +23,8 @@ nexonClient.interceptors.request.use((config) => {
 // 1. ouid 조회
 export const getOuid = async (nickname: string) => {
   const cleanName = nickname.trim();
-  // Axios params를 쓰지 않고 URL을 직접 조립
   const response = await nexonClient.get<{ ouid: string }>(
-    `/id?nickname=${encodeURIComponent(cleanName)}`,
+    `/id?nickname=${cleanName}`,
   );
   return response.data;
 };
