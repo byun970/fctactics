@@ -7,16 +7,20 @@ import type {
 } from "@/types/nexon";
 import axios from "axios";
 
-const NEXON_API_KEY = import.meta.env.VITE_NEXON_API_KEY;
-
 export const nexonClient = axios.create({
   baseURL: "https://open.api.nexon.com/fconline/v1",
-  headers: {
-    "x-nxopen-api-key": NEXON_API_KEY,
-  },
 });
 
-// 1. ouid 조회 (axios params 이용)
+// 요청 직전에 API Key를 헤더에 주입 (환경 변수 누락 방지)
+nexonClient.interceptors.request.use((config) => {
+  const apiKey = import.meta.env.VITE_NEXON_API_KEY;
+  if (apiKey) {
+    config.headers["x-nxopen-api-key"] = apiKey;
+  }
+  return config;
+});
+
+// 1. ouid 조회
 export const getOuid = async (nickname: string) => {
   const response = await nexonClient.get<{ ouid: string }>("/id", {
     params: {
@@ -39,10 +43,10 @@ export async function getMatchIds(
   return response.data;
 }
 
-// 3. 매치 상세 조회 (matchId 대소문자 수정)
+// 3. 매치 상세 조회 (⚠️ 파라미터명을 matchid 소문자로 복구)
 export async function getMatchDetail(matchid: string): Promise<MatchDetail> {
   const response = await nexonClient.get("/match", {
-    params: { matchId: matchid }, // matchid -> matchId
+    params: { matchid },
   });
   return response.data;
 }
