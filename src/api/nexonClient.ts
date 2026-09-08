@@ -19,7 +19,9 @@ export const nexonClient = axios.create({
 // 1. ouid 조회 (axios params 이용)
 export const getOuid = async (nickname: string) => {
   const response = await nexonClient.get<{ ouid: string }>("/id", {
-    params: { nickname: nickname.trim() },
+    params: {
+      nickname: nickname.trim(),
+    },
   });
   return response.data;
 };
