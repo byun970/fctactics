@@ -12,8 +12,8 @@ export default function SearchPage() {
   const {
     ouid,
     matchDetails = [],
-    matchTypes = [],
     maxDivision = [],
+    meta: { matchTypes = [] } = {},
     isLoading,
     isError,
     error,
