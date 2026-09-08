@@ -115,6 +115,12 @@ export function FieldLayout({
                 </div>
 
                 <div
+                  className={`w-full truncate text-[9px] leading-tight font-medium`}
+                >
+                  {player.spId}
+                </div>
+
+                <div
                   className={`w-full truncate text-[9px] leading-tight font-medium ${ratingColorClass}`}
                 >
                   ★ {player.status?.spRating ?? "0.0"}
