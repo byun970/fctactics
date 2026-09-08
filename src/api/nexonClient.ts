@@ -22,15 +22,24 @@ nexonClient.interceptors.request.use((config) => {
 
 // 1. ouid 조회
 export const getOuid = async (nickname: string) => {
-  // 1. URLSearchParams 객체를 생성하여 파라미터 세팅
-  const params = new URLSearchParams();
-  params.append("nickname", nickname.trim());
+  const apiKey = import.meta.env.VITE_NEXON_API_KEY;
+  const cleanName = nickname.trim();
 
-  // 2. params.toString()을 사용하여 URL 뒤에 직접 붙여 요청
-  const response = await nexonClient.get<{ ouid: string }>(
-    `/id?${params.toString()}`,
+  const response = await fetch(
+    `https://open.api.nexon.com/fconline/v1/id?nickname=${encodeURIComponent(cleanName)}`,
+    {
+      headers: {
+        "x-nxopen-api-key": apiKey,
+      },
+    },
   );
-  return response.data;
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error?.message || "Failed to fetch ouid");
+  }
+
+  return response.json();
 };
 // 2. 매치 ID 목록 조회
 export async function getMatchIds(
