@@ -22,13 +22,16 @@ nexonClient.interceptors.request.use((config) => {
 
 // 1. ouid 조회
 export const getOuid = async (nickname: string) => {
-  const cleanName = nickname.trim();
+  // 1. URLSearchParams 객체를 생성하여 파라미터 세팅
+  const params = new URLSearchParams();
+  params.append("nickname", nickname.trim());
+
+  // 2. params.toString()을 사용하여 URL 뒤에 직접 붙여 요청
   const response = await nexonClient.get<{ ouid: string }>(
-    `/id?nickname=${cleanName}`,
+    `/id?${params.toString()}`,
   );
   return response.data;
 };
-
 // 2. 매치 ID 목록 조회
 export async function getMatchIds(
   ouid: string,
