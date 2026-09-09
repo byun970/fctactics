@@ -1,8 +1,7 @@
 import { SearchForm } from "@/components/SearchForm";
 import { useUserMatches } from "@/hooks/useUserMatches";
 import { useSearchStore } from "@/stores/useSearchStore";
-import axios from "axios";
-import { useParams, useSearchParams } from "react-router";
+import { useParams } from "react-router";
 
 export default function SearchPage() {
   const { nickname } = useParams<{ nickname: string }>();

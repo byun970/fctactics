@@ -26,7 +26,6 @@ export function SearchResultPage() {
     matchTypes = [],
     sppositionMap = {},
     division = [],
-    spid = [],
   } = useNexonMetaData();
 
   const userMaxDivisionId = maxDivision[0]?.division;

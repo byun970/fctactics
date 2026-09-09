@@ -16,7 +16,6 @@ export function SearchForm({ isLoading }: SearchFormProps) {
 
   const setInputNickName = useSearchStore((state) => state.setInputNickName);
   const setSearchTarget = useSearchStore((state) => state.setSearchTarget);
-  const setIsModalOpen = useSearchStore((state) => state.setIsModalOpen);
 
   useEffect(() => {
     if (nickname) {

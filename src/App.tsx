@@ -1,6 +1,5 @@
 import "./App.css";
 import { Routes, Route, Outlet } from "react-router";
-import IndexPage from "./pages/index-page";
 import SearchPage from "./pages/search-page";
 import Layout from "./components/Layout";
 import { SearchResultPage } from "./pages/search-result-page";
