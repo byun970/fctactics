@@ -1,6 +1,6 @@
 import { type MatchDetail, type Player } from "@/types/nexon";
 import { useState } from "react";
-
+import { formatKstDate } from "@/utils/date";
 import { FieldLayout } from "./FieldLayout";
 
 interface MatchItemProps {
@@ -47,7 +47,7 @@ export function MatchItem({ match, ouid, sppositionMap }: MatchItemProps) {
             {myInfo?.nickname ?? "나"} vs {opponentInfo?.nickname ?? "상대"}
           </p>
           <p className="text-muted-foreground text-[10px]">
-            {new Date(match.matchDate).toLocaleString()}
+            {formatKstDate(match.matchDate)}
           </p>
         </div>
         <div className="text-right text-lg">
