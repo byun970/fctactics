@@ -33,7 +33,7 @@ export interface MatchInfo {
     shoot: number;
     goal: number;
     possession?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   player: Player[];
   shoot?: ShootInfo;

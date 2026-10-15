@@ -6,15 +6,32 @@ import type {
   PlayerMeta,
   PositionMeta,
 } from "@/types/nexon";
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 
-const NEXON_API_KEY = import.meta.env.VITE_NEXON_API_KEY;
+const META_BASE_URL = "https://open.api.nexon.com/static/fconline/meta";
+const MAX_RETRY = 3;
 
+// API 키는 서버 프록시(개발: vite proxy, 배포: api/nexon.ts)에서 주입
 export const nexonClient = axios.create({
   baseURL: "/api/fconline/v1",
-  headers: {
-    "x-nxopen-api-key": NEXON_API_KEY,
-  },
+});
+
+// 429(요청 한도 초과) 시 지수 백오프로 재시도
+nexonClient.interceptors.response.use(undefined, async (error) => {
+  const config = error.config as
+    | (InternalAxiosRequestConfig & { _retryCount?: number })
+    | undefined;
+
+  if (error.response?.status === 429 && config) {
+    config._retryCount = (config._retryCount ?? 0) + 1;
+
+    if (config._retryCount <= MAX_RETRY) {
+      const waitTime = 2 ** config._retryCount * 500;
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+      return nexonClient(config);
+    }
+  }
+  return Promise.reject(error);
 });
 
 export const getOuid = async (nickname: string) => {
@@ -43,13 +60,6 @@ export async function getMatchDetail(matchid: string): Promise<MatchDetail> {
   return response.data;
 }
 
-export async function getMatchType(): Promise<MatchTypeMeta[]> {
-  const response = await axios.get(
-    "https://open.api.nexon.com/static/fconline/meta/matchtype.json",
-  );
-  return response.data;
-}
-
 export async function getMaxDivision(ouid: string): Promise<MaxDivision[]> {
   const response = await nexonClient.get("/user/maxdivision", {
     params: { ouid },
@@ -57,48 +67,13 @@ export async function getMaxDivision(ouid: string): Promise<MaxDivision[]> {
   return response.data;
 }
 
-export async function getSppostionMeta(): Promise<PositionMeta[]> {
-  const response = await axios.get(
-    "https://open.api.nexon.com/static/fconline/meta/spposition.json",
-  );
+async function getMeta<T>(fileName: string): Promise<T> {
+  const response = await axios.get<T>(`${META_BASE_URL}/${fileName}`);
   return response.data;
 }
 
-export async function getDivisionMeta(): Promise<DivisionMeta[]> {
-  const response = await axios.get(
-    "https://open.api.nexon.com/static/fconline/meta/division.json",
-  );
-  return response.data;
-}
-
-export async function getSpidMeta(): Promise<PlayerMeta[]> {
-  const response = await axios.get(
-    "https://open.api.nexon.com/static/fconline/meta/spid.json",
-  );
-  return response.data;
-}
-
-export const nexonApi = axios.create({
-  baseURL: "https://open.api.nexon.com", // 또는 설정하신 Proxy URL
-});
-
-nexonApi.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const { config, response } = error;
-
-    if (response?.status === 429 && config) {
-      config._retryCount = config._retryCount || 0;
-
-      if (config._retryCount < 3) {
-        config._retryCount += 1;
-
-        const waitTime = Math.pow(2, config._retryCount) * 1000;
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
-
-        return nexonApi(config);
-      }
-    }
-    return Promise.reject(error);
-  },
-);
+export const getMatchType = () => getMeta<MatchTypeMeta[]>("matchtype.json");
+export const getSppostionMeta = () =>
+  getMeta<PositionMeta[]>("spposition.json");
+export const getDivisionMeta = () => getMeta<DivisionMeta[]>("division.json");
+export const getSpidMeta = () => getMeta<PlayerMeta[]>("spid.json");

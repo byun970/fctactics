@@ -30,5 +30,18 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off",
     },
   },
+  {
+    // shadcn/ui 생성 컴포넌트 (원본 유지)
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
+  {
+    // Vercel 서버리스 함수 (Node 환경)
+    files: ["api/**/*.ts"],
+    languageOptions: { globals: globals.node },
+  },
   prettierConfig, // Prettier 사용 시
 ]);

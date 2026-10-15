@@ -1,4 +1,4 @@
-import { useNexonMetaData, useUserMatches } from "@/hooks/useUserMatches";
+import { useUserMatches } from "@/hooks/useUserMatches";
 import { useSearchStore } from "@/stores/useSearchStore";
 import { MatchTypeFilter } from "@/components/MatchTypeFilter";
 import { Loader2 } from "lucide-react";
@@ -14,19 +14,13 @@ export function SearchResultPage() {
 
   const {
     ouid,
-    matchDetails = [],
-    maxDivision = [],
-
+    matchIds,
+    maxDivision,
+    meta: { matchTypes, sppositionMap, division },
     isLoading,
     isError,
     error,
   } = useUserMatches(decodedNickname, selectedMatchType);
-
-  const {
-    matchTypes = [],
-    sppositionMap = {},
-    division = [],
-  } = useNexonMetaData();
 
   const userMaxDivisionId = maxDivision[0]?.division;
 
@@ -86,7 +80,8 @@ export function SearchResultPage() {
       </div>
       {ouid && <MatchTypeFilter matchTypes={matchTypes} />}
       <MatchList
-        matchDetails={matchDetails}
+        key={`${ouid}-${selectedMatchType}`}
+        matchIds={matchIds}
         ouid={ouid}
         sppositionMap={sppositionMap}
       />

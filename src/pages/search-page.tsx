@@ -1,23 +1,6 @@
 import { SearchForm } from "@/components/SearchForm";
-import { useUserMatches } from "@/hooks/useUserMatches";
-import { useSearchStore } from "@/stores/useSearchStore";
-import { useParams } from "react-router";
 
 export default function SearchPage() {
-  const { nickname } = useParams<{ nickname: string }>();
-  const selectedMatchType = useSearchStore((state) => state.selectedMatchType);
-  const searchTarget = nickname ? decodeURIComponent(nickname) : "";
-
-  const {
-    ouid,
-    matchDetails = [],
-    maxDivision = [],
-    meta: { matchTypes = [] } = {},
-    isLoading,
-    isError,
-    error,
-  } = useUserMatches(searchTarget, selectedMatchType);
-
   return (
     <div className="from-background via-muted/50 to-background flex min-h-screen flex-col items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6 text-center">

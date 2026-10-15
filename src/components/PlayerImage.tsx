@@ -1,5 +1,7 @@
 import { getPlayerActionImage, getPlayerImage } from "@/utils/nexon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+const DEFAULT_PLAYER_IMAGE = "/images/default_player.png";
 
 interface PlayerImageProps {
   spid?: number;
@@ -8,30 +10,17 @@ interface PlayerImageProps {
 }
 
 export function PlayerImage({ spid, name, className }: PlayerImageProps) {
-  const [imgSrc, setImgSrc] = useState<string | undefined>(undefined);
-  const [errorStep, setErrorStep] = useState<number>(0);
+  // 로드 실패 단계: 액션 이미지 → 기본 선수 이미지 → 대체 이미지
+  const [failure, setFailure] = useState({ spid, step: 0 });
+  const step = failure.spid === spid ? failure.step : 0;
 
-  useEffect(() => {
-    if (spid) {
-      setImgSrc(getPlayerActionImage(spid));
-      setErrorStep(0);
-    } else {
-      setImgSrc("/images/default_player.png");
-    }
-  }, [spid]);
+  const sources = spid
+    ? [getPlayerActionImage(spid), getPlayerImage(spid), DEFAULT_PLAYER_IMAGE]
+    : [DEFAULT_PLAYER_IMAGE];
+  const imgSrc = sources[Math.min(step, sources.length - 1)];
 
   const handleError = () => {
-    if (!spid) {
-      setImgSrc("/images/default_player.png");
-      return;
-    }
-
-    if (errorStep === 0) {
-      setImgSrc(getPlayerImage(spid));
-      setErrorStep(1);
-    } else if (errorStep === 1) {
-      setImgSrc("/images/default_player.png");
-    }
+    if (step < sources.length - 1) setFailure({ spid, step: step + 1 });
   };
 
   return (

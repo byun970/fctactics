@@ -5,8 +5,7 @@ import {
   POSITION_GRID_MAP,
   getPositionColorClass,
 } from "@/constants/position";
-import { useNexonMetaData } from "@/hooks/useUserMatches";
-import { useMemo } from "react";
+import { useSpidNameMap } from "@/hooks/useUserMatches";
 
 interface FieldLayoutProps {
   title: string;
@@ -23,16 +22,7 @@ export function FieldLayout({
 }: FieldLayoutProps) {
   const mainPlayers = players.filter((p) => p.spPosition !== 28);
 
-  const { spid = [] } = useNexonMetaData();
-
-  const spidNameMap = useMemo(() => {
-    return spid.reduce<Record<number, string>>((acc, item) => {
-      if (item && item.id) {
-        acc[item.id] = item.name;
-      }
-      return acc;
-    }, {});
-  }, [spid]);
+  const spidNameMap = useSpidNameMap();
 
   const ratings = mainPlayers
     .map((p) => Number(p.status?.spRating ?? 0))

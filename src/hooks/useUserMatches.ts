@@ -8,52 +8,77 @@ import {
   getSpidMeta,
   getSppostionMeta,
 } from "@/api/nexonClient";
-import type { MatchDetail } from "@/types/nexon";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+
+// 정적 메타데이터는 세션 동안 변하지 않음
+const STATIC = { staleTime: Infinity, gcTime: Infinity } as const;
+
+// spid.json 은 용량이 커서 페이지 로딩을 막지 않도록 별도 분리하고,
+// 이름 맵 변환을 queryFn 에서 한 번만 수행해 캐시에 저장
+export const spidNameMapQueryOptions = queryOptions({
+  queryKey: ["spidNameMap"],
+  queryFn: async () => {
+    const data = await getSpidMeta();
+    const map: Record<number, string> = {};
+    for (const item of data) {
+      if (item?.id) map[item.id] = item.name;
+    }
+    return map;
+  },
+  ...STATIC,
+});
+
+export function useSpidNameMap() {
+  return useQuery(spidNameMapQueryOptions).data ?? {};
+}
 
 export function useNexonMetaData() {
   const matchTypesQuery = useQuery({
     queryKey: ["matchTypes"],
     queryFn: getMatchType,
-    staleTime: Infinity,
+    ...STATIC,
   });
 
   const sppositionMetaQuery = useQuery({
-    queryKey: ["sppositionMeta"],
-    queryFn: getSppostionMeta,
-    staleTime: Infinity,
-    select: (data) =>
-      data?.reduce<Record<number, string>>((acc, item) => {
+    queryKey: ["sppositionMap"],
+    queryFn: async () => {
+      const data = await getSppostionMeta();
+      const map: Record<number, string> = {};
+      for (const item of data) {
         if (item && typeof item.spposition === "number") {
-          acc[item.spposition] = item.desc;
+          map[item.spposition] = item.desc;
         }
-        return acc;
-      }, {}) ?? {},
+      }
+      return map;
+    },
+    ...STATIC,
   });
 
   const divisionMetaQuery = useQuery({
     queryKey: ["divisionMeta"],
     queryFn: getDivisionMeta,
-    staleTime: Infinity,
-  });
-
-  const spidMetaQuery = useQuery({
-    queryKey: ["spidMeta"],
-    queryFn: getSpidMeta,
-    staleTime: Infinity,
+    ...STATIC,
   });
 
   return {
     matchTypes: matchTypesQuery.data ?? [],
     division: divisionMetaQuery.data ?? [],
-    spid: spidMetaQuery.data ?? [],
     sppositionMap: sppositionMetaQuery.data ?? {},
     isMetaLoading:
       matchTypesQuery.isLoading ||
       sppositionMetaQuery.isLoading ||
-      divisionMetaQuery.isLoading ||
-      spidMetaQuery.isLoading,
+      divisionMetaQuery.isLoading,
   };
+}
+
+// 경기 상세는 매치 ID 단위로 캐싱 (종료된 경기는 변하지 않음)
+export function useMatchDetail(matchId: string) {
+  return useQuery({
+    queryKey: ["matchDetail", matchId],
+    queryFn: () => getMatchDetail(matchId),
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 30,
+  });
 }
 
 export function useUserMatches(nickname: string, matchType: number = 50) {
@@ -73,28 +98,7 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
     queryKey: ["matchIds", ouid, matchType],
     queryFn: () => getMatchIds(ouid!, matchType, 0, 20),
     enabled: !!ouid,
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
-
-  const matchIds = matchIdsQuery.data ?? [];
-
-  const matchDetailsQuery = useQuery({
-    queryKey: ["matchDetails", matchIds.join(",")], // 참조값 대신 문자열 키 사용
-    queryFn: async () => {
-      const results: MatchDetail[] = [];
-
-      for (const id of matchIds) {
-        const detail = await getMatchDetail(id);
-        results.push(detail);
-        // 요청 간 100ms 강제 대기
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      return results;
-    },
-    enabled: matchIds.length > 0,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false, // 탭 전환 시 자동 재요청으로 인한 429 방지
+    staleTime: 1000 * 60,
     retry: false,
   });
 
@@ -107,24 +111,16 @@ export function useUserMatches(nickname: string, matchType: number = 50) {
 
   return {
     ouid,
-    matchDetails: matchDetailsQuery.data ?? [],
+    matchIds: matchIdsQuery.data ?? [],
     maxDivision: maxDivisionQuery.data ?? [],
-    meta, // 메타데이터 일괄 반환
+    meta,
     isLoading:
       ouidQuery.isLoading ||
       matchIdsQuery.isLoading ||
-      matchDetailsQuery.isLoading ||
       maxDivisionQuery.isLoading ||
       meta.isMetaLoading,
     isError:
-      ouidQuery.isError ||
-      matchIdsQuery.isError ||
-      matchDetailsQuery.isError ||
-      maxDivisionQuery.isError,
-    error:
-      ouidQuery.error ||
-      matchIdsQuery.error ||
-      matchDetailsQuery.error ||
-      maxDivisionQuery.error,
+      ouidQuery.isError || matchIdsQuery.isError || maxDivisionQuery.isError,
+    error: ouidQuery.error || matchIdsQuery.error || maxDivisionQuery.error,
   };
 }
