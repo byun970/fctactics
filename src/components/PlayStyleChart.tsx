@@ -116,7 +116,13 @@ export function PlayStyleChart({ matchIds, ouid }: PlayStyleChartProps) {
             <XAxis dataKey="name" fontSize={11} />
             <YAxis domain={[0, 100]} unit="%" fontSize={11} />
             <Tooltip formatter={(v) => `${v}%`} />
-            <Bar dataKey="value" name="비율" fill="#10b981" radius={4} />
+            <Bar
+              dataKey="value"
+              name="비율"
+              fill="#10b981"
+              radius={4}
+              isAnimationActive={false}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
