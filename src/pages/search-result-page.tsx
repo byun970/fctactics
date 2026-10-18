@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MatchList } from "@/components/MatchList";
 import axios from "axios";
 import type { DivisionMeta } from "@/types/nexon";
+import { PlayStyleChart } from "@/components/PlayStyleChart";
 export function SearchResultPage() {
   const { nickname } = useParams<{ nickname: string }>();
   const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
@@ -79,6 +80,7 @@ export function SearchResultPage() {
         </Button>
       </div>
       {ouid && <MatchTypeFilter matchTypes={matchTypes} />}
+      {ouid && <PlayStyleChart matchIds={matchIds} ouid={ouid} />}
       <MatchList
         key={`${ouid}-${selectedMatchType}`}
         matchIds={matchIds}
