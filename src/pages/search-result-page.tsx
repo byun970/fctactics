@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { MatchList } from "@/components/MatchList";
 import axios from "axios";
 import type { DivisionMeta } from "@/types/nexon";
+import { lazy, Suspense } from "react";
+
+// recharts 가 커서 검색 결과 페이지 진입 시에만 로드
+const PlayStyleChart = lazy(() =>
+  import("@/components/PlayStyleChart").then((m) => ({
+    default: m.PlayStyleChart,
+  })),
+);
 export function SearchResultPage() {
   const { nickname } = useParams<{ nickname: string }>();
   const decodedNickname = nickname ? decodeURIComponent(nickname) : "";
@@ -79,6 +87,15 @@ export function SearchResultPage() {
         </Button>
       </div>
       {ouid && <MatchTypeFilter matchTypes={matchTypes} />}
+      {ouid && (
+        <Suspense
+          fallback={
+            <div className="bg-muted/40 h-72 animate-pulse rounded-lg" />
+          }
+        >
+          <PlayStyleChart matchIds={matchIds} ouid={ouid} />
+        </Suspense>
+      )}
       <MatchList
         key={`${ouid}-${selectedMatchType}`}
         matchIds={matchIds}

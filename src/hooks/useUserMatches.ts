@@ -72,13 +72,16 @@ export function useNexonMetaData() {
 }
 
 // 경기 상세는 매치 ID 단위로 캐싱 (종료된 경기는 변하지 않음)
-export function useMatchDetail(matchId: string) {
-  return useQuery({
+export const matchDetailQueryOptions = (matchId: string) =>
+  queryOptions({
     queryKey: ["matchDetail", matchId],
     queryFn: () => getMatchDetail(matchId),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
   });
+
+export function useMatchDetail(matchId: string) {
+  return useQuery(matchDetailQueryOptions(matchId));
 }
 
 export function useUserMatches(nickname: string, matchType: number = 50) {
