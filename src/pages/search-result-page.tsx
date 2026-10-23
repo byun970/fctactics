@@ -68,7 +68,7 @@ export function SearchResultPage() {
       <div className="flex items-center justify-between border-b pb-2">
         <h1 className="text-xl font-bold">
           {decodedNickname}{" "}
-          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
             {divisionName}
           </span>
         </h1>
