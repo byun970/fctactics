@@ -16,8 +16,8 @@ const RESULT_CONFIG: Record<string, { label: string; color: string }> = {
   무: { label: "무", color: "text-gray-500" },
 };
 
-const isFieldPlayer = (player: Player) =>
-  player.spPosition !== 28 && !!player.status;
+// spPosition 기반 교체 선수 제외는 FieldLayout 에서 처리
+const hasStatus = (player: Player) => !!player.status;
 
 export function MatchItem({ matchId, ouid, sppositionMap }: MatchItemProps) {
   const { data: match, isLoading, isError } = useMatchDetail(matchId);
@@ -75,12 +75,12 @@ export function MatchItem({ matchId, ouid, sppositionMap }: MatchItemProps) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FieldLayout
             title={myInfo?.nickname ?? "내 스쿼드"}
-            players={myPlayers.filter(isFieldPlayer)}
+            players={myPlayers.filter(hasStatus)}
             sppositionMap={sppositionMap}
           />
           <FieldLayout
             title={opponentInfo?.nickname ?? "상대 스쿼드"}
-            players={opponentPlayers.filter(isFieldPlayer)}
+            players={opponentPlayers.filter(hasStatus)}
             sppositionMap={sppositionMap}
             isOpponent
           />

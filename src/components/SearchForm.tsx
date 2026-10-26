@@ -12,7 +12,7 @@ interface SearchFormProps {
 export function SearchForm({ isLoading }: SearchFormProps) {
   const { nickname } = useParams<{ nickname: string }>();
   const inputNickName = useSearchStore((state) => state.inputNickName);
-  const naviagate = useNavigate();
+  const navigate = useNavigate();
 
   const setInputNickName = useSearchStore((state) => state.setInputNickName);
   const setSearchTarget = useSearchStore((state) => state.setSearchTarget);
@@ -29,7 +29,7 @@ export function SearchForm({ isLoading }: SearchFormProps) {
     e.preventDefault();
     if (!inputNickName.trim()) return;
     setSearchTarget(inputNickName.trim());
-    naviagate(`/search/${encodeURIComponent(inputNickName.trim())}`);
+    navigate(`/search/${encodeURIComponent(inputNickName.trim())}`);
   };
 
   return (

@@ -43,7 +43,7 @@ export const getOuid = async (nickname: string) => {
 
 export async function getMatchIds(
   ouid: string,
-  matchtype: number = 52,
+  matchtype: number = 50,
   offset: number = 0,
   limit: number = 20,
 ): Promise<string[]> {
