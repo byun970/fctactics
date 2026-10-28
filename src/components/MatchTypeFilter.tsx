@@ -25,7 +25,11 @@ export function MatchTypeFilter({ matchTypes }: MatchTypeFilterProps) {
               selectedMatchType === type.matchtype ? "default" : "outline"
             }
             size="sm"
-            className="cursor-pointer text-xs"
+            className={`cursor-pointer text-xs ${
+              selectedMatchType === type.matchtype
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : ""
+            }`}
             onClick={() => setSelectedMatchType(type.matchtype)}
           >
             {type.desc}

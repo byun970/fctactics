@@ -39,7 +39,7 @@ export function FieldLayout({
         {title}
       </h4>
 
-      <div className="relative aspect-3/4 w-full overflow-hidden rounded-xl border-2 border-emerald-600/60 bg-emerald-800 p-2 shadow-inner">
+      <div className="relative aspect-3/5 w-full sm:aspect-3/4 overflow-hidden rounded-xl border-2 border-emerald-600/60 bg-emerald-800 p-2 shadow-inner">
         <svg
           className="pointer-events-none absolute inset-0 h-full w-full stroke-white/30"
           strokeWidth="1.5"
@@ -102,7 +102,7 @@ export function FieldLayout({
                   top: `${targetY}%`,
                   transform: "translate(-50%, -50%)",
                 }}
-                className="absolute flex w-16 flex-col items-center rounded-md border border-white/20 bg-black/60 p-1 text-center shadow-md backdrop-blur-md transition-all hover:z-20 hover:scale-105"
+                className="absolute flex w-12 flex-col items-center rounded-md border border-white/20 bg-black/60 p-0.5 text-center sm:w-16 sm:p-1 shadow-md backdrop-blur-md transition-all hover:z-20 hover:scale-105"
               >
                 <div className="flex w-full items-center justify-between gap-1 border-b border-white/10 pb-0.5">
                   <span
@@ -115,8 +115,8 @@ export function FieldLayout({
                   </span>
                 </div>
 
-                <div className="my-0.5 h-8 w-8">
-                  <PlayerImage spid={player.spId} />
+                <div className="my-0.5 flex h-6 w-6 justify-center sm:h-8 sm:w-8">
+                  <PlayerImage spid={player.spId} className="h-full" />
                 </div>
 
                 <div
@@ -131,7 +131,7 @@ export function FieldLayout({
                   ★ {player.status?.spRating ?? "0.0"}
                 </div>
 
-                <div className="w-full truncate text-[9px] leading-tight font-medium text-white/90">
+                <div className="hidden w-full truncate text-[9px] leading-tight font-medium text-white/90 sm:block">
                   {player.status?.goal ?? 0}골 {player.status?.assist ?? 0}어시
                 </div>
               </div>

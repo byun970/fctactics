@@ -16,6 +16,28 @@ interface PlayStyleChartProps {
   ouid: string;
 }
 
+// 좁은 화면에서도 라벨이 숨지 않게 띄어쓰기 기준으로 줄을 나눔
+function MultiLineTick({
+  x,
+  y,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}) {
+  const words = (payload?.value ?? "").split(" ");
+  return (
+    <text x={x} y={y} textAnchor="middle" fontSize={10} fill="currentColor">
+      {words.map((word, i) => (
+        <tspan key={word} x={x} dy={12}>
+          {word}
+        </tspan>
+      ))}
+    </text>
+  );
+}
+
 const rate = (value: number, total: number) =>
   total > 0 ? Math.round((value / total) * 1000) / 10 : 0;
 
@@ -113,7 +135,12 @@ export function PlayStyleChart({ matchIds, ouid }: PlayStyleChartProps) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data.bars}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="name" fontSize={11} />
+            <XAxis
+              dataKey="name"
+              interval={0}
+              height={36}
+              tick={<MultiLineTick />}
+            />
             <YAxis domain={[0, 100]} unit="%" fontSize={11} />
             <Tooltip formatter={(v) => `${v}%`} />
             <Bar
