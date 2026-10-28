@@ -47,7 +47,7 @@ export function SearchForm({ isLoading }: SearchFormProps) {
         <Button
           size="lg"
           disabled={isLoading}
-          className="h-12 cursor-pointer px-6 font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="h-12 cursor-pointer bg-emerald-600 px-6 font-semibold text-white hover:bg-emerald-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
           type="submit"
         >
           {isLoading ? (

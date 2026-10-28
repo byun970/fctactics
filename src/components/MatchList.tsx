@@ -54,7 +54,7 @@ export function MatchList({ matchIds, ouid, sppositionMap }: MatchListProps) {
       <div className="flex justify-center py-4">
         {hasMore && (
           <Button
-            className="cursor-pointer bg-blue-500 hover:bg-blue-600"
+            className="cursor-pointer bg-emerald-600 text-white hover:bg-emerald-700"
             onClick={handleLoadMore}
           >
             더보기
