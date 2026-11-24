@@ -29,7 +29,7 @@ function MultiLineTick({
   const words = (payload?.value ?? "").split(" ");
   return (
     <text x={x} y={y} textAnchor="middle" fontSize={10} fill="currentColor">
-      {words.map((word, i) => (
+      {words.map((word) => (
         <tspan key={word} x={x} dy={12}>
           {word}
         </tspan>
