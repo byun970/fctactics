@@ -72,19 +72,13 @@ export function MatchItem({ matchId, ouid, sppositionMap }: MatchItemProps) {
       </div>
 
       {hasClicked && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FieldLayout
-            title={myInfo?.nickname ?? "내 스쿼드"}
-            players={myPlayers.filter(hasStatus)}
-            sppositionMap={sppositionMap}
-          />
-          <FieldLayout
-            title={opponentInfo?.nickname ?? "상대 스쿼드"}
-            players={opponentPlayers.filter(hasStatus)}
-            sppositionMap={sppositionMap}
-            isOpponent
-          />
-        </div>
+        <FieldLayout
+          myTitle={myInfo?.nickname ?? "내 스쿼드"}
+          myPlayers={myPlayers.filter(hasStatus)}
+          opponentTitle={opponentInfo?.nickname ?? "상대 스쿼드"}
+          opponentPlayers={opponentPlayers.filter(hasStatus)}
+          sppositionMap={sppositionMap}
+        />
       )}
     </>
   );
