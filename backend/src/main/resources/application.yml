@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: fctactics-backend
+  profiles:
+    default: local        # 프로필을 안 주면 local을 쓴다
+  jpa:
+    open-in-view: false   # 경고 제거
