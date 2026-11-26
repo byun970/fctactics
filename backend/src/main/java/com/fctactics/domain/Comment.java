@@ -17,6 +17,8 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    protected Comment() {}
+
     public Comment(Post post, String content) {
         this.post = post;
         this.content = content;

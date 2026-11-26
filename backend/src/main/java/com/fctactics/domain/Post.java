@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String title;
 
@@ -15,7 +15,9 @@ public class Post {
 
     private LocalDateTime createdAt;
 
-    protected Post(String title, String content) {
+    protected Post() {}
+
+    public Post(String title, String content) {
         this.title = title;
         this.content = content;
         this.createdAt = LocalDateTime.now();
